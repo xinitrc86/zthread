@@ -1,0 +1,30 @@
+body { font-family:arial; font-size:13px; background-color: white; margin: 0px; }
+table { border: 1px solid black; border-spacing: 0px; border-collapse: collapse; text-align: left; vertical-align: top; width: 100%; }
+tr { vertical-align: top; }
+th { border: 1px solid black; padding: 4px; background-color: #EBEBEB; text-align: left; }
+td { border: 1px solid black; padding: 3px; }
+h2 { font-size: 22px; }
+h4 { font-size: 18px; }
+h5 { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+a { color: black; }
+#header { border-bottom: 3px solid grey; background-color: ghostwhite; width: 100%; padding: 4px; padding-left: 8px; }
+#headerTitle { padding: 5px; font-size: 22px }
+#content { margin: 8px; }
+#footer { font-size: 11px; padding-bottom: 8px; padding-left: 8px; }
+.identifier { font-weight: bold; text-transform: lowercase; }
+.methodSignature { border: 0px; margin: 1px; width: auto; }
+.methodSignature tr { text-align: left; vertical-align: top; }
+.methodSignature td { border: 0px; padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 5px; }
+.methodParametersDocumentation { border: 0px; margin-left: 5px; width: auto; }
+.methodParametersDocumentation td { border: 0px; padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 5px; }
+.parametersTable { border: 0px; }
+.fieldName {}
+.methodName {}
+.parameterName {}
+.exceptionName {}
+.objectName { text-transform: uppercase; }
+.interfaceName { font-weight: normal; }
+.exceptions { border: 0px; width: auto; }
+.exceptions td { border: 0px; padding: 0px; padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 5px; }
+.abapDocComment p { margin-top: 0px; }
+.shorttext { margin-top: 0px; }

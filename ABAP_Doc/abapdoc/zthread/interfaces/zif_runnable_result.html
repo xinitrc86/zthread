@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><title>Interface ZIF_RUNNABLE_RESULT</title><link rel="stylesheet" href="../../../htmldesign/stylesheet.css" type="text/css"></head><body><div id="header"><div id="navigationMenu"><a href="#interfaces">Interfaces</a></div></div><div id="content"><h2>Interface <span class="identifier objectName">ZIF_RUNNABLE_RESULT</span></h2><p>public</p><h4>Documentation</h4><span class="abapDocComment"> <p><h3>Interface for runnable result.</h3><br>
+ Results from runnables must implement this interface. The result can be taken from the thread after it is finished or in
+ the callback routine, if defined in the Thread creation. <br>
+ <strong>Whoever fetches this result must now its concrete type so it can access its data.</strong> <br>
+ <em><strong>for example:</strong> <br>
+ class zcl_a_result...interfaces zif_runnable_result <br>
+ methods: <br>
+ set_some_result importing iv_a_result type something. <br>
+ get_some_result returning value(rv_result) type something. <br>
+ ... <br>
+ <strong>on the runnable-run: </strong><br>
+ data(lo_result) = new zcl_a_result( ). <br>
+ lo_result-&gt;set_some_result( ... ) <br>
+ ro_result = lo_result. <br>
+ ... <br>
+ <strong>on your callback: </strong><br>
+ data(lo_result) = cast zcl_a_result( io_result ). <br>
+ data(lv_real_result) = lo_result-&gt;get_some_result( ) <br>
+ ... <br>
+ <strong>after a thread finishes: </strong><br>
+ lo_thread-&gt;join( ). <br>
+ data(lo_result) = cast zcl_a_result( lo_thread-&gt;get_result( ) ). <br>
+ data(lv_real_result) = lo_result-&gt;get_some_result( ) <br>
+ </em>
+ </p></span><h4 id="interfaces">Interfaces</h4><span class="identifier interfaceName">if_serializable_object</span><br/></div><div id="footer">Generated on 24.08.2021</div></body></html>

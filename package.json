@@ -1,0 +1,23 @@
+{
+	"name": "zthread",
+	"author" :  "xinitrc86 <felipe.dimmu@gmail.com>",
+	"version": "1.0.0",
+	"description": "Simple Thread implementation for ABAP. Based on JAVA Thread, its Runnable interface with some additional callback capabilities.",
+	"license" : "MIT",
+	"repository": {
+		"type" : "git",
+		"url" : "https://github.com/xinitrc86/zthread.git"
+	  },	
+  "scripts": {
+    "test": "npm run eslint && npm run abaplint",
+    "merge": "",
+    "merge.ci": "",
+    "abaplint": "abaplint",
+    "eslint": "eslint src"
+  },
+  "devDependencies": {
+    "@abaplint/cli": "^2.36.6",
+    "abapmerge": "^0.14.1",
+    "eslint": "^7.2.0"
+  }
+}
