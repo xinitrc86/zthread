@@ -116,7 +116,7 @@ class zcl_callback_example definition.
 	 new zcl_thread( io_runnable = runnable2, io_callback = me )->start( ).
 	 
 	 zcl_thread=>join_all( ).
-	 write: myTotal. "summed 30 + 60 =  90 "
+	 write: myTotal. "sum 30 + 60 =  90 "
    
    endmethod.
    
