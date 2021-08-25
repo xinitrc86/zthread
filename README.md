@@ -80,6 +80,7 @@ data(myThread) = new zcl_thread( myRunnable ).
 
 myThread->start( ).
 myThread->join( ).
+
 "retrieves the result, callers must know its type"
 data(myResult) = cast zcl_my_runnable( myThread->get_result( ) ).
 data(myTotal) = myResult->get_total( ).
