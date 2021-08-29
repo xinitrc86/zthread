@@ -64,13 +64,16 @@ class zcl_my_runnable definition.
 	endmethod.
 	
 	method zif_runnable~run.
-	"sums numbers into myTotal"
-	myTotal = reduce #( 
+	  "sums numbers into myTotal"
+	  myTotal = reduce #( 
 		init total = 0.
 		for number in myNumbers
 		next
 			total = total + number
-	).
+	  ).
+          "This is possoble because me is implementing 
+          "zif_runnable_result. Could be another object.
+          ro_result = me.
 	endmethod.
 	
 endclass.
