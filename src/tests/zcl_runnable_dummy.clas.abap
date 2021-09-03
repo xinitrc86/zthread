@@ -9,14 +9,14 @@ class zcl_runnable_dummy definition
     interfaces:  zif_runnable,zif_runnable_result.
     methods: constructor
         importing
-            iv_wait type c optional.
+            iv_wait type zethread_wait_time optional.
     methods:
         raise_on_run,
         was_run_called returning value(r_result) type abap_bool.
   protected section.
   private section.
     data v_run_called type abap_bool.
-    data v_wait type c.
+    data v_wait type zethread_wait_time.
     data v_raise_on_run type abap_bool.
 endclass.
 

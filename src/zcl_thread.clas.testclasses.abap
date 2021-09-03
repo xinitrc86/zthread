@@ -14,7 +14,7 @@ class ltc_thread definition final for testing
       o_runnable       type ref to zcl_runnable_dummy,
       v_collected      type i,
       v_last_collected type char32,
-      v_last_failed type char32.
+      v_last_failed    type char32.
     methods:
       setup,
       it_has_name for testing,
@@ -26,7 +26,8 @@ class ltc_thread definition final for testing
       it_callsback_with_error for testing,
       it_returns_error for testing,
       it_joins_started_thread for testing,
-      it_joins_all_threads for testing.
+      it_joins_all_threads for testing,
+      it_times_out_join for testing.
 endclass.
 
 
@@ -34,10 +35,10 @@ class ltc_thread implementation.
 
 
   method setup.
-  clear:
-    v_collected,
-    v_last_collected,
-    v_last_failed.
+    clear:
+      v_collected,
+      v_last_collected,
+      v_last_failed.
 
     o_runnable = new zcl_runnable_dummy(  ).
     o_cut = new zcl_thread( o_runnable ).
@@ -232,6 +233,41 @@ class ltc_thread implementation.
     ).
 
 
+
+  endmethod.
+
+  method it_times_out_join.
+
+
+    "to avoid flaky test, still flaky depending on system usage
+    data lo_failure type ref to cx_root.
+    do 5 times.
+      "should raise
+      try.
+          clear lo_failure.
+          o_runnable = new zcl_runnable_dummy( '0.2' ).
+          o_cut = new zcl_thread( o_runnable ).
+          o_cut->start(  ).
+          o_cut->join( '0.1' ).
+
+
+        catch zcx_wait_timeout into lo_failure.
+          assert_bound( lo_failure ).
+      endtry.
+      assert_bound( lo_failure ).
+
+      "should not raise
+      clear lo_failure.
+      o_runnable = new zcl_runnable_dummy( '0.1' ).
+      o_cut = new zcl_thread( o_runnable ).
+      o_cut->start(  ).
+      o_cut->join( '0.2' ).
+      "as proof of completion
+      o_cut->get_result(  ).
+
+
+
+    enddo.
 
   endmethod.
 

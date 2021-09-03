@@ -32,6 +32,24 @@
      <MSGNR>004</MSGNR>
      <TEXT>&amp;1&amp;2&amp;3&amp;4</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZTHREAD</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Executer is shut(ing) down.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZTHREAD</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>An error ocurred during thread execution.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZTHREAD</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>Wait timeout (&amp;1s) reached.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

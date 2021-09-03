@@ -23,7 +23,9 @@ class zcl_thread definition
     interfaces zif_runnable.
     class-methods:
       "! <p>Waits for all asynchronous work to finish for the calling program.</p>
-      join_all.
+      join_all
+        importing
+          iv_timeout type zethread_wait_time optional.
     methods:
       "! <p>Creates a new Thread</p>
       "! @parameter io_runnable | <p>The runnable to execute asynchronously.</p>
@@ -57,7 +59,9 @@ class zcl_thread definition
       get_error
         returning value(ro_result) type ref to cx_root,
       "! <p>Waits for the thread to finish</p>
-      join,
+      join
+        importing
+          iv_timeout type zethread_wait_time optional,
       "! <p>Used internally to receive thread result.</p>
       "! @parameter p_task | <p>task id</p>
       on_end
@@ -65,12 +69,19 @@ class zcl_thread definition
           p_task type clike.
   protected section.
   private section.
+    constants gc_wait_period_interval type zethread_wait_time value '0.1'.
     data o_runnable type ref to zif_runnable.
     data v_is_running type abap_bool.
     data o_result type ref to zif_runnable_result.
     data o_callback type ref to zif_thread_callback.
     data v_taskname type char32.
     data o_error type ref to cx_root.
+    class-methods:
+      check_timeout_reached
+        importing
+          iv_timeout type zethread_wait_time
+          iv_start   type datldref-typint
+          iv_now   type datldref-typint.
     methods:
       is_runnable
         returning
@@ -85,7 +96,7 @@ class zcl_thread definition
       start_asynchronously
         importing
           iv_serialized type string,
-      callback_on_callback
+      callback_on_result
         importing
           iv_task   type clike
           iv_result type string,
@@ -93,7 +104,7 @@ class zcl_thread definition
         importing
           iv_task  type clike
           iv_error type string,
-    check_still_running.
+      check_still_running.
 endclass.
 
 
@@ -101,18 +112,30 @@ endclass.
 class zcl_thread implementation.
 
   method join_all.
-    data(lv_joined) = abap_false.
-    while lv_joined = abap_false.
+
+    get run time field data(lv_start).
+    do.
       "not sure how wait works without up to seconds
       "fearing CPU time eating by this, I'm waiting relatively long for the next check
       wait for asynchronous tasks
-      until abap_true = abap_false up to '0.2' seconds.
+      until abap_true = abap_false
+      up to gc_wait_period_interval seconds.
+      get run time field data(lv_now).
+
       "4 = The logical expression log_exp is false.
       "Also the current program does not contain any asynchronous function calls with callback routines,
       "and no receiver is registered for AMC messages or APC messages for the use of the additions
       "MESSAGING CHANNELS or PUSH CHANNELS.
-      lv_joined = xsdbool( sy-subrc = 4 ).
-    endwhile.
+      if sy-subrc = 4.
+        return.
+      endif.
+
+      check_timeout_reached(
+            iv_timeout = iv_timeout
+            iv_start   = lv_start
+            iv_now     = lv_now ).
+    enddo.
+
   endmethod.
 
   method constructor.
@@ -135,7 +158,10 @@ class zcl_thread implementation.
   method zif_runnable~run.
     "implement on extending thread classes
     "or create default thread with a runnable
-    raise exception type zcx_not_a_runnable.
+    if me = o_runnable.
+        raise exception type zcx_not_a_runnable.
+    endif.
+    o_runnable->run(  ).
   endmethod.
 
   method get_taskname.
@@ -169,8 +195,26 @@ class zcl_thread implementation.
   endmethod.
 
   method join.
-    wait for asynchronous tasks
-    until is_running( ) = abap_false.
+
+    get run time field data(lv_start).
+    do.
+
+      wait for asynchronous tasks
+      until is_running( ) = abap_false
+      up to gc_wait_period_interval seconds.
+      get run time field data(lv_now).
+
+      if sy-subrc = 0.
+        return.
+      endif.
+
+      check_timeout_reached(
+            iv_timeout = iv_timeout
+            iv_start   = lv_start
+            iv_now     = lv_now ).
+
+    enddo.
+
   endmethod.
 
   method on_end.
@@ -185,7 +229,7 @@ class zcl_thread implementation.
 
     v_is_running = abap_false.
 
-    callback_on_callback(
+    callback_on_result(
           iv_task   = p_task
           iv_result = lv_result ).
 
@@ -234,7 +278,7 @@ class zcl_thread implementation.
 
     while num_free_dia_wps < 3.
       "can lead to starvation if server usage is too high for too long
-      wait up to '0.2' seconds.
+      wait up to gc_wait_period_interval seconds.
       call 'ThWpInfo'
       id 'OPCODE' field opcode_wp_get_info
       id 'WP' field num_wps
@@ -273,7 +317,7 @@ class zcl_thread implementation.
 
   endmethod.
 
-  method callback_on_callback.
+  method callback_on_result.
 
     check iv_result is not initial.
 
@@ -316,6 +360,21 @@ class zcl_thread implementation.
 
     if is_running(  ).
       raise exception type zcx_still_running.
+    endif.
+
+  endmethod.
+
+
+  method check_timeout_reached.
+    check iv_timeout is not initial
+    and iv_timeout <> 0
+    and iv_timeout > 0.
+
+    data(lv_waited_in_tenths) = conv zethread_wait_time( ( ( iv_now - iv_start ) / 1000000 ) ).
+    if lv_waited_in_tenths >= iv_timeout.
+      raise exception type zcx_wait_timeout
+        exporting
+          waited = lv_waited_in_tenths.
     endif.
 
   endmethod.

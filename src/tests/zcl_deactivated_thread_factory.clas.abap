@@ -63,7 +63,7 @@ class zcl_deactivated_thread_factory implementation.
         data(lo_thread_result) = t_results[ thread_num = v_created_threads ]-result.
         lo_thread->set_result( lo_thread_result ).
     catch cx_sy_itab_line_not_found.
-        return.
+        lo_thread->set_result( new zcl_dummy_runnable_result(  ) ).
     endtry.
 
   endmethod.
