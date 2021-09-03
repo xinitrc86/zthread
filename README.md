@@ -1,5 +1,7 @@
 # ZThread
 Simple parallel execution via Threads implemented in ABAP, based on JAVA Thread and its *Runnable* interface plus callback capabilities. 
+Check the [blog post](https://blogs.sap.com/2021/08/26/async-parallel-abap-in-a-oo-way/) for more details.
+Check the ABAPDocs for API information.
 ```
 data(someProcessing) = new zcl_some_processing( some_data ).
 data(anotherProcessing) = new zcl_some_other( some_data ).
