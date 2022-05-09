@@ -2,7 +2,7 @@
 Simple parallel execution via Threads implemented in ABAP, based on JAVA Thread and its *Runnable* interface plus callback capabilities. 
 Check the [blog post](https://blogs.sap.com/2021/08/26/async-parallel-abap-in-a-oo-way/) for more details.
 Check the ABAPDocs for API information.
-```
+```abap
 data(someProcessing) = new zcl_some_processing( some_data ).
 data(anotherProcessing) = new zcl_some_other( some_data ).
 
@@ -18,7 +18,7 @@ You can check the ABAP Docs for info and the source for examples. Feel free to p
 
 ## Usage
 Implement the *zif_runnable* interface with the logic you want to *fork* (start in a new thread), give it to a thread and start:
-```
+```abap
 class zcl_my_runnable...
    interfaces zif_runnable.
    
@@ -40,7 +40,7 @@ class zcl_my_runnable...
 ```
 ### Waiting for Threads to end
 The static method join_all allows *join* (wait for threads to finish).
-```
+```abap
 data(myThread) = new zcl_thread(aRunnable).
 new zcl_thread(anotherRunnable)->start( ).
 new zcl_thread(yetAnotherRunnable)->start( ).
@@ -53,7 +53,7 @@ zcl_thread=>join_all( ). "waits for all threads to finish"
 ```
 ### Retrieving threads results
 You can retrieve results back from Threads by implementing the *zif_runnable_result* interface.
-```
+```abap
 class zcl_my_runnable definition.
 	"here runnable is implementing both interfaces"
 	"but the result can be a separate object too"
@@ -96,7 +96,7 @@ write: myTotal. "30"
 
 ### Defining callbacks
 To defined a callback, implement interface *zif_thread_callback|* and passe it along to the thread. For an callback object to be called back, it must still be referenced once the thread is finished.
-```
+```abap
 class zcl_callback_example definition.
    interfaces zif_thread_callback.
    
