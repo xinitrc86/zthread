@@ -23,8 +23,8 @@ class ztc_thread_pool_example implementation.
   method it_sums_numbers.
 
 
-    "this the fixed pool executor will ensure that now matter how many threads are submitted/involed
-    "only iv_threads will be running in parallel at the same time
+    "The fixed pool executor will ensure that: no matter how many threads are submitted/invoked
+    "only <iv_threads> number of threads will be running in parallel at the same time
 
     data lt_runnables type zif_executor_service=>tty_runnables.
     data(lo_fixed_pool) = zcl_executors=>new_fixed_thread_pool(
@@ -32,13 +32,13 @@ class ztc_thread_pool_example implementation.
                           io_callback       = me ).
 
 
-    "using submit
+    "you can use submit( )...
     do 20 times.
         data(lo_runnable1) = new lcl_sum_numbers( value #(
             ( 10 ) ( 20 ) ( 30 )
         ) ).
 
-        "a future represents the result of an async computation
+        "A future represents the result of an async computation
         data(lo_future) = lo_fixed_pool->submit( lo_runnable1 ).
 
         append lo_runnable1 to lt_runnables.
@@ -46,22 +46,17 @@ class ztc_thread_pool_example implementation.
 
     enddo.
 
-    "using invoke_all
-    "a future represents the result of an async computation
+    "...or you can use invoke all.    
     data(lt_futures) = lo_fixed_pool->invoke_all( lt_runnables ).
-    "by this point 40 threads are created
 
-
-    "a get in a future will make the program wait for that
-    "specific thread to complete
+    "A get in a future will make the running code to wait for the thread to finish
     data(lo_result) = cast lcl_sum_numbers( lo_future->get(  ) ).
     assert_equals(
         exp = 60
         act = lo_result->get_sum(  )
     ).
 
-    "a get in a future will make the program wait for that
-    "specific thread to complete
+    "Waiting for a specific thread to complete
     lo_future = lt_futures[ 1 ].
     lo_result = cast lcl_sum_numbers( lo_future->get( ) ).
     assert_equals(
@@ -69,7 +64,7 @@ class ztc_thread_pool_example implementation.
         act = lo_result->get_sum(  )
     ).
 
-    "awaits termination of all threads in the pool
+    "Waiting for all threads to complete
     lo_fixed_pool->await_termination(  ).
 
     assert_equals(
