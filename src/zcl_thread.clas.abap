@@ -291,8 +291,8 @@ class zcl_thread implementation.
 
     call function 'ZTHREAD_START'
       starting new task v_taskname
-      "destination in group DEFAULT
-      destination 'NONE'
+      destination in group DEFAULT
+      "destination 'NONE'
       calling on_end on end of task
       exporting
         iv_runnable = iv_serialized
