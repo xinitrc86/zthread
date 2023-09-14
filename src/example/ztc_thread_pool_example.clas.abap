@@ -46,7 +46,7 @@ class ztc_thread_pool_example implementation.
 
     enddo.
 
-    "...or you can use invoke all.    
+    "...or you can use invoke all.
     data(lt_futures) = lo_fixed_pool->invoke_all( lt_runnables ).
 
     "A get in a future will make the running code to wait for the thread to finish

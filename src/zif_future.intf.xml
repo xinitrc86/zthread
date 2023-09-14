@@ -12,7 +12,6 @@
    </VSEOINTERF>
    <DESCRIPTIONS>
     <SEOCOMPOTX>
-     <CLSNAME>ZIF_FUTURE</CLSNAME>
      <CMPNAME>IS_DONE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Returns true in case future is resolved.</DESCRIPT>
