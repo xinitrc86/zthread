@@ -237,8 +237,6 @@ class zcl_thread implementation.
        iv_task  = p_task
        iv_error = lv_error ).
 
-
-
   endmethod.
 
   method is_runnable.
@@ -265,24 +263,44 @@ class zcl_thread implementation.
 
 
   method wait_for_free_dialog.
-    "hardcoded 3 on purpose. Less than that and systems get weird.
+    "hardcoded 4 on purpose. Less than that and systems get weird.
     data num_free_dia_wps            type i.
     data num_wps                     type i.
+    data attempt_num                 type i.
     constants opcode_wp_get_info     type x value 25.
 
-    call 'ThWpInfo'
-      id 'OPCODE' field opcode_wp_get_info
-      id 'WP' field num_wps
-      id 'FREE_DIAWP' field num_free_dia_wps.
 
 
-    while num_free_dia_wps < 3.
+    call function 'SPBT_INITIALIZE'
+      importing
+        free_pbt_wps                   =  num_free_dia_wps   " PBT resources that are currently free
+      exceptions
+        others                         = 7.
+
+    if sy-subrc = 0 and num_free_dia_wps >= 4.
+        return.
+    endif.
+
+    while num_free_dia_wps < 4.
+      call function 'SPBT_GET_CURR_RESOURCE_INFO'
+        importing
+          free_pbt_wps                = num_free_dia_wps
+        exceptions
+          others                      = 3.
+
+      if sy-subrc <> 0.
+        num_free_dia_wps = 0.
+      endif.
+
       "can lead to starvation if server usage is too high for too long
       wait up to gc_wait_period_interval seconds.
-      call 'ThWpInfo'
-      id 'OPCODE' field opcode_wp_get_info
-      id 'WP' field num_wps
-      id 'FREE_DIAWP' field num_free_dia_wps.
+
+      attempt_num = attempt_num + 1.
+
+      if attempt_num > 600. "wait for a minute at maximum (600 x 0.1s)
+        raise exception type zcx_thread_start_fail.
+      endif.
+
     endwhile.
 
   endmethod.
@@ -297,9 +315,12 @@ class zcl_thread implementation.
       exporting
         iv_runnable = iv_serialized
       exceptions
-        others      = 1.
+        error_message = 1
+        system_failure = 2
+        communication_failure = 3
+        resource_failure = 4.
 
-    if sy-subrc = 1.
+    if sy-subrc > 0.
       raise exception type zcx_thread_start_fail.
     endif.
 
